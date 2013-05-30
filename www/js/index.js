@@ -1,7 +1,7 @@
 var pushNotification,
     senderId = "67065553472", //this is the project number from the api console,
-    pushAppId = "402881863ef54c79013ef55024000001",
-    pushServerUrl = "http://192.168.1.6:8180/ag-push/rest/registry/device",
+    pushAppId = "8a5659fc3ed3c3d6013ef59a8e210001", //this is the id of the android variant
+    pushServerUrl = "http://keynotepushserver-lholmqui.rhcloud.com/ag-push/rest/registry/device", //the url of the push server
     app = {
         initialize: function() {
             this.bind();
