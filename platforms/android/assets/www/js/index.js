@@ -1,10 +1,13 @@
 var pushNotification,
-    senderId = "67065553472", //this is the project number from the api console,
-    pushAppId = "8a5659fc3ed3c3d6013ef59a8e210001", //this is the id of the android variant
+    senderId = "551917860768", //this is the project number from the api console,
+    pushAppId = "8a5659fc3ef65306013ef68e3c070012", //this is the id of the android variant
     pushServerUrl = "http://keynotepushserver-lholmqui.rhcloud.com/ag-push/rest/registry/device", //the url of the push server
+    mapOptions,
+    map, 
     app = {
         initialize: function() {
             this.bind();
+           
         },
         bind: function() {
             document.addEventListener('deviceready', this.deviceready, false);
@@ -17,12 +20,16 @@ var pushNotification,
         },
         report: function(id) {
             console.log("report:" + id);
-            // hide the .pending <p> and show the .complete <p>
-            document.querySelector('#' + id + ' .pending').className += ' hide';
-            var completeElem = document.querySelector('#' + id + ' .complete');
-            completeElem.className = completeElem.className.split('hide').join('');
+           
         },
         startPush: function() {
+        	 mapOptions  = {
+                     center: new google.maps.LatLng(-34.397, 150.644),
+                     zoom: 8,
+                     mapTypeId: google.maps.MapTypeId.ROADMAP
+                 };
+             map =  new google.maps.Map(document.getElementById("map-canvas"),
+                     mapOptions);
             console.log( "starting Push" );
             pushNotification = window.plugins.pushNotification;
             var success, error;
@@ -44,8 +51,13 @@ var pushNotification,
         }
     };
 
+
+
+
+
 // handle GCM notifications for Android
 function onNotificationGCM(e) {
+	
     switch( e.event )
     {
         case 'registered':
@@ -68,10 +80,10 @@ function onNotificationGCM(e) {
                 headers: { "ag-mobile-app": pushAppId },
                 data: JSON.stringify( userRegData ),
                 success: function( response ) {
-                    console.log( response );
+                	console.log( response );
                 },
                 error: function( response ) {
-                    console.log( "error" );
+                	console.log( "error" );
                     console.log( response );
                 }
             });
@@ -79,6 +91,15 @@ function onNotificationGCM(e) {
         }
         break;
         case 'message':
+        	
+        	var myLatlng = new google.maps.LatLng(-34.397, 150.644);
+        	var marker = new google.maps.Marker({
+        	    position: myLatlng,
+        	    title:"Hello World!",
+        	    icon: "aerogear_logo_200px.png"
+        	});
+        	
+        	marker.setMap(map);
             // if this flag is set, this notification happened while we were in the foreground.
             // you might want to play a sound to get the user's attention, throw up a dialog, etc.
             if (e.foreground)
@@ -97,9 +118,9 @@ function onNotificationGCM(e) {
                     //$("#app-status-ul").append('<li>--BACKGROUND NOTIFICATION--' + '</li>');
                 }
             }
-
-            alert( e.payload.message );
-            //$("#app-status-ul").append('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
+            
+            //alert( e.payload.message );
+            //$("#app-status-ul").append('<li>ME SSAGE -> MSG: ' + e.payload.message + '</li>');
             //$("#app-status-ul").append('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
         break;
         case 'error':
